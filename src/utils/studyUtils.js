@@ -3,9 +3,12 @@ export function calculateSessionTotals(segments) {
   let breakTime = 0;
   const now = Date.now();
 
+  if (!Array.isArray(segments)) return { study: 0, breakTime: 0 };
+
   segments.forEach(seg => {
-    const end = seg.end ? seg.end : now;
-    const duration = end - seg.start;
+    if (!seg || typeof seg.start !== 'number') return;
+    const end = (typeof seg.end === 'number') ? seg.end : now;
+    const duration = Math.max(0, end - seg.start);
     if (seg.type === 'Study') study += duration;
     if (seg.type === 'Break') breakTime += duration;
   });

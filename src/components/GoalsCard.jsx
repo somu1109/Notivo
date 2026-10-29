@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { Edit2, Trash2, Plus, Target } from 'lucide-react';
+import { Edit2, Trash2, Plus, ListChecks, ArrowUpRight } from 'lucide-react';
+import ConfirmModal from './ConfirmModal';
 
 export default function GoalsCard({ 
   todayGoals, 
@@ -7,12 +8,15 @@ export default function GoalsCard({
   toggleGoal, 
   editGoal, 
   deleteGoal,
+  clearTodayGoals,
   bringBackUnfinished,
   hasPastUnfinished
 }) {
   const [inputText, setInputText] = useState('');
   const [editingId, setEditingId] = useState(null);
   const [editText, setEditText] = useState('');
+  const [goalToDelete, setGoalToDelete] = useState(null);
+  const [isClearAllModalOpen, setIsClearAllModalOpen] = useState(false);
 
   const handleAdd = (e) => {
     e.preventDefault();
@@ -33,110 +37,224 @@ export default function GoalsCard({
   const allDone = totalCount > 0 && doneCount === totalCount;
 
   return (
-    <div className="card">
-      <div className="card-title">
-        <Target size={20} color="var(--goals)" />
-        Today's Goals
+    <div className="card" style={{ padding: '14px 18px' }}>
+      <div className="card-header-row" style={{ marginBottom: '8px' }}>
+        <span className="card-title" style={{ fontSize: '1rem' }}>Today's Tasks</span>
+        
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          {totalCount > 0 && (
+            <button
+              type="button"
+              onClick={() => setIsClearAllModalOpen(true)}
+              className="btn btn-secondary"
+              style={{ 
+                padding: '4px 12px', 
+                height: '28px', 
+                fontSize: '0.76rem', 
+                gap: '5px',
+                color: 'var(--color-text-muted)' 
+              }}
+              title="Clear all tasks for today"
+            >
+              <Trash2 size={12} />
+              <span>Clear All Tasks</span>
+            </button>
+          )}
+
+          <div className="card-arrow-btn" style={{ width: '26px', height: '26px' }}>
+            <ArrowUpRight size={13} />
+          </div>
+        </div>
       </div>
 
-      <form onSubmit={handleAdd} className="form-row" style={{ marginBottom: 'var(--sp-5)' }}>
+      {/* Rounded Input with Black Pill "Add" Button */}
+      <form onSubmit={handleAdd} className="form-row" style={{ marginBottom: '12px' }}>
         <input 
           type="text" 
           value={inputText} 
           onChange={e => setInputText(e.target.value)} 
-          placeholder="What do you want to accomplish today?" 
+          placeholder="What task do you plan to achieve today?" 
           className="input-field"
-          style={{ flex: 1, minWidth: '200px' }}
+          style={{ flex: 1, minWidth: '200px', padding: '8px 16px', height: '38px', fontSize: '0.88rem' }}
         />
-        <button type="submit" className="btn btn-primary" style={{ background: 'var(--goals)' }}>
-          <Plus size={18} /> Add
+        <button 
+          type="submit" 
+          className="btn btn-primary" 
+          style={{ padding: '0 18px', height: '38px', fontSize: '0.84rem' }}
+        >
+          <Plus size={15} strokeWidth={1.5} /> Add Task
         </button>
       </form>
 
       {totalCount > 0 && (
-        <div style={{ marginBottom: 'var(--sp-5)' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.9rem', fontWeight: 600, marginBottom: 'var(--sp-2)', color: 'var(--text-secondary)' }}>
-            <span>{doneCount} of {totalCount} done</span>
-            <span style={{ color: allDone ? 'var(--study)' : 'var(--goals)' }}>{Math.round(progressPercent)}%</span>
+        <div style={{ 
+          marginBottom: '12px', 
+          background: 'rgba(255, 255, 255, 0.45)', 
+          padding: '8px 14px', 
+          borderRadius: '14px', 
+          border: '1px solid var(--color-gray-border)'
+        }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.82rem', fontWeight: 500, marginBottom: '6px', color: 'var(--color-text-main)' }}>
+            <span>{doneCount} of {totalCount} completed</span>
+            <span style={{ fontWeight: 600 }}>{Math.round(progressPercent)}%</span>
           </div>
-          <div style={{ height: '8px', background: 'var(--border-color)', borderRadius: '4px', overflow: 'hidden' }}>
-            <div style={{ height: '100%', background: 'var(--goals)', width: `${progressPercent}%`, transition: 'width 0.3s ease' }}></div>
+          
+          {/* Yellow Progress Pill Track */}
+          <div style={{ 
+            height: '6px', 
+            background: 'rgba(0, 0, 0, 0.08)', 
+            borderRadius: 'var(--radius-pill)', 
+            overflow: 'hidden' 
+          }}>
+            <div style={{ 
+              height: '100%', 
+              background: 'var(--color-yellow)', 
+              width: `${progressPercent}%`, 
+              borderRadius: 'var(--radius-pill)',
+              transition: 'width 0.3s ease' 
+            }} />
           </div>
-          {allDone && <div style={{ color: 'var(--study)', marginTop: 'var(--sp-2)', fontSize: '0.9rem', fontWeight: 'bold', textAlign: 'center' }}>All goals completed today 🎉</div>}
+          
+          {allDone && (
+            <div style={{ marginTop: '6px', fontSize: '0.8rem', fontWeight: 500, color: 'var(--color-text-main)', textAlign: 'center' }}>
+              All tasks completed for today!
+            </div>
+          )}
         </div>
       )}
 
       {totalCount === 0 && (
-        <div style={{ textAlign: 'center', padding: 'var(--sp-6)', color: 'var(--text-secondary)' }}>
-          Write your first goal for today!
+        <div style={{ textAlign: 'center', padding: '16px 8px', color: 'var(--color-text-muted)' }}>
+          <div style={{
+            width: '36px',
+            height: '36px',
+            borderRadius: '50%',
+            background: 'var(--color-neutral-bg)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            color: 'var(--color-text-muted)',
+            margin: '0 auto 8px'
+          }}>
+            <ListChecks size={18} strokeWidth={1.5} />
+          </div>
+          <div style={{ fontWeight: 500, color: 'var(--color-text-main)', fontSize: '0.88rem' }}>No tasks set for today</div>
+          <div style={{ fontSize: '0.78rem', marginTop: '2px' }}>Type a task above to start your daily chain.</div>
         </div>
       )}
 
-      <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
+      {/* Accordion-Style List with Dotted Dividers */}
+      <div style={{ display: 'flex', flexDirection: 'column' }}>
         {todayGoals.map(goal => (
-          <li key={goal.id} className="item-row" style={{ borderBottom: '1px solid var(--border-color)', borderRadius: 0 }}>
-            <input 
-              type="checkbox" 
-              checked={goal.done} 
-              onChange={() => toggleGoal(goal.id)}
-              className="custom-checkbox"
-            />
-            
-            {editingId === goal.id ? (
-              <div style={{ flex: 1, display: 'flex', gap: 'var(--sp-2)' }}>
-                <input 
-                  type="text" 
-                  value={editText} 
-                  onChange={e => setEditText(e.target.value)} 
-                  className="input-field"
-                  style={{ padding: '6px 10px' }}
-                  autoFocus
-                />
-                <button onClick={() => handleSaveEdit(goal.id)} className="btn btn-primary" style={{ background: 'var(--goals)' }}>Save</button>
-                <button onClick={() => setEditingId(null)} className="btn btn-secondary">Cancel</button>
-              </div>
-            ) : (
-              <span style={{ 
-                flex: 1, 
-                textDecoration: goal.done ? 'line-through' : 'none', 
-                color: goal.done ? 'var(--text-secondary)' : 'var(--text-main)',
-                wordBreak: 'break-word',
-                fontWeight: 500
-              }}>
-                {goal.text}
-              </span>
-            )}
+          <div 
+            key={goal.id} 
+            className="item-row" 
+            style={{ justifyContent: 'space-between' }}
+          >
+            <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flex: 1, minWidth: 0 }}>
+              <input 
+                type="checkbox" 
+                checked={goal.done} 
+                onChange={() => toggleGoal(goal.id)}
+                className="custom-checkbox"
+              />
+              
+              {editingId === goal.id ? (
+                <div style={{ flex: 1, display: 'flex', gap: '8px' }}>
+                  <input 
+                    type="text" 
+                    value={editText} 
+                    onChange={e => setEditText(e.target.value)} 
+                    className="input-field"
+                    style={{ padding: '6px 14px' }}
+                    autoFocus
+                  />
+                  <button onClick={() => handleSaveEdit(goal.id)} className="btn btn-primary" style={{ padding: '6px 14px', fontSize: '0.82rem' }}>
+                    Save
+                  </button>
+                  <button onClick={() => setEditingId(null)} className="btn btn-secondary" style={{ padding: '6px 14px', fontSize: '0.82rem' }}>
+                    Cancel
+                  </button>
+                </div>
+              ) : (
+                <span style={{ 
+                  flex: 1, 
+                  textDecoration: goal.done ? 'line-through' : 'none', 
+                  color: goal.done ? 'var(--color-text-muted)' : 'var(--color-text-main)',
+                  wordBreak: 'break-word',
+                  fontWeight: 400,
+                  fontSize: '0.92rem'
+                }}>
+                  {goal.text}
+                </span>
+              )}
+            </div>
 
             {editingId !== goal.id && (
-              <div className="actions">
+              <div style={{ display: 'flex', gap: '6px' }}>
                 <button 
-                  className="icon-btn"
+                  className="round-btn"
                   onClick={() => { setEditingId(goal.id); setEditText(goal.text); }}
-                  title="Edit"
+                  title="Edit Task"
+                  style={{ width: '30px', height: '30px', padding: 0 }}
                 >
-                  <Edit2 size={16} />
+                  <Edit2 size={13} color="var(--color-text-muted)" />
                 </button>
                 <button 
-                  className="icon-btn"
-                  onClick={() => { if(window.confirm('Delete this goal?')) deleteGoal(goal.id); }}
-                  title="Delete"
-                  style={{ color: 'var(--tasks)' }}
+                  className="round-btn"
+                  onClick={() => setGoalToDelete(goal)}
+                  title="Delete Task"
+                  style={{ width: '30px', height: '30px', padding: 0 }}
                 >
-                  <Trash2 size={16} />
+                  <Trash2 size={13} color="var(--color-text-muted)" />
                 </button>
               </div>
             )}
-          </li>
+          </div>
         ))}
-      </ul>
+      </div>
 
       {hasPastUnfinished && totalCount === 0 && (
-        <div style={{ marginTop: 'var(--sp-5)', textAlign: 'center' }}>
-          <button onClick={bringBackUnfinished} className="btn btn-secondary">
-            Bring back yesterday's unfinished goals
+        <div style={{ marginTop: '18px', textAlign: 'center' }}>
+          <button onClick={bringBackUnfinished} className="btn btn-secondary" style={{ fontSize: '0.85rem' }}>
+            Bring back yesterday's unfinished tasks
           </button>
         </div>
       )}
+
+      {/* Confirmation Modal for Single Task Delete */}
+      <ConfirmModal 
+        isOpen={Boolean(goalToDelete)}
+        onClose={() => setGoalToDelete(null)}
+        onConfirm={() => {
+          if (goalToDelete) {
+            deleteGoal(goalToDelete.id);
+            setGoalToDelete(null);
+          }
+        }}
+        title="Delete Task?"
+        message={`Are you sure you want to delete "${goalToDelete?.text}"? This action cannot be undone.`}
+        confirmText="Delete"
+        cancelText="Cancel"
+        isDanger={true}
+      />
+
+      {/* Confirmation Modal for Clear All Tasks */}
+      <ConfirmModal 
+        isOpen={isClearAllModalOpen}
+        onClose={() => setIsClearAllModalOpen(false)}
+        onConfirm={() => {
+          if (clearTodayGoals) {
+            clearTodayGoals();
+          }
+          setIsClearAllModalOpen(false);
+        }}
+        title="Clear All Tasks?"
+        message="Are you sure you want to clear all tasks for today? This action cannot be undone."
+        confirmText="Clear All"
+        cancelText="Cancel"
+        isDanger={true}
+      />
     </div>
   );
 }

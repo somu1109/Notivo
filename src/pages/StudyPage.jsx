@@ -3,6 +3,7 @@ import { useAppContext } from '../context/AppContext';
 import StudySummary from '../components/StudySummary';
 import StudyHistory from '../components/StudyHistory';
 import CustomSelect from '../components/CustomSelect';
+import { ArrowUpRight, Sliders } from 'lucide-react';
 
 export default function StudyPage() {
   const { study } = useAppContext();
@@ -10,6 +11,7 @@ export default function StudyPage() {
     sessions, 
     currentSegments, 
     deleteSession,
+    trackerState,
     studyLengthMs,
     setStudyLengthMs,
     breakLengthMs,
@@ -59,63 +61,103 @@ export default function StudyPage() {
   const isCustomBreak = forceCustomBreak || !breakOptionsArr.map(o => o.value).filter(v => v !== 'custom').includes(breakLengthMs);
 
   return (
-    <div>
-      <div className="page-header">
-        <h2>Study</h2>
-        <p>Track your focus sessions and daily goals.</p>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', paddingBottom: '10px' }}>
+      <div>
+        <h1 style={{ fontSize: 'clamp(1.6rem, 2.4vw, 2.1rem)', fontWeight: 300, letterSpacing: '-0.03em', color: 'var(--color-text-main)' }}>
+          Focus &amp; Study
+        </h1>
+        <p style={{ color: 'var(--color-text-muted)', fontSize: '0.86rem', marginTop: '2px' }}>
+          Organize deep work blocks with rhythmic break intervals.
+        </p>
       </div>
 
       <StudySummary sessions={sessions} currentSegments={currentSegments} />
       
-      <div className="card">
-        <div className="card-title">Notification Settings</div>
-        <div className="form-row" style={{ alignItems: 'flex-start' }}>
-          <div style={{ flex: 1, minWidth: '200px' }}>
-            <label style={{ fontSize: '0.9rem', display: 'block', marginBottom: '8px', color: 'var(--text-secondary)' }}>Suggest Break After:</label>
-            <CustomSelect 
-              value={isCustomStudy ? 'custom' : studyLengthMs} 
-              options={studyOptionsArr}
-              onChange={handleStudyChange}
-            />
-            {isCustomStudy && (
-              <div style={{ marginTop: '8px', display: 'flex', gap: '8px', alignItems: 'center' }}>
-                <input 
-                  type="number" 
-                  min="1"
-                  className="input-field" 
-                  value={Math.round(studyLengthMs / 60000) || ''} 
-                  onChange={e => setStudyLengthMs(parseInt(e.target.value || 0) * 60000)}
-                  style={{ width: '80px', padding: '6px 10px' }}
-                />
-                <span style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>minutes</span>
+      {/* Side-by-side grid for Pacing & Interval Timers and Session History */}
+      <div className="study-bottom-grid" style={{ position: 'relative', zIndex: 10 }}>
+        {/* Pacing Controls Card */}
+        <div className="card" style={{ padding: '14px 18px', display: 'flex', flexDirection: 'column', height: '100%', margin: 0, gap: '10px', position: 'relative', zIndex: 20 }}>
+          <div className="card-header-row" style={{ marginBottom: 0 }}>
+            <div className="card-title">
+              <div style={{
+                width: '28px',
+                height: '28px',
+                borderRadius: '50%',
+                background: 'var(--color-yellow-soft)',
+                border: '1px solid var(--color-gray-border)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                color: '#1C1C1E'
+              }}>
+                <Sliders size={14} />
               </div>
-            )}
+              <span style={{ fontSize: '1rem' }}>Pacing &amp; Interval Timers</span>
+            </div>
+            <div className="card-arrow-btn" style={{ width: '26px', height: '26px' }}>
+              <ArrowUpRight size={13} />
+            </div>
           </div>
-          <div style={{ flex: 1, minWidth: '200px' }}>
-            <label style={{ fontSize: '0.9rem', display: 'block', marginBottom: '8px', color: 'var(--text-secondary)' }}>Break Over After:</label>
-            <CustomSelect 
-              value={isCustomBreak ? 'custom' : breakLengthMs} 
-              options={breakOptionsArr}
-              onChange={handleBreakChange}
-            />
-            {isCustomBreak && (
-              <div style={{ marginTop: '8px', display: 'flex', gap: '8px', alignItems: 'center' }}>
-                <input 
-                  type="number" 
-                  min="1"
-                  className="input-field" 
-                  value={Math.round(breakLengthMs / 60000) || ''} 
-                  onChange={e => setBreakLengthMs(parseInt(e.target.value || 0) * 60000)}
-                  style={{ width: '80px', padding: '6px 10px' }}
-                />
-                <span style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>minutes</span>
-              </div>
-            )}
+          
+          <div className="form-row" style={{ alignItems: 'flex-start', gap: '14px' }}>
+            <div style={{ flex: 1, minWidth: '160px', position: 'relative' }}>
+              <label style={{ fontSize: '0.82rem', display: 'block', marginBottom: '6px', color: 'var(--color-text-muted)', fontWeight: 400 }}>
+                Suggest Break After:
+              </label>
+              <CustomSelect 
+                value={isCustomStudy ? 'custom' : studyLengthMs} 
+                options={studyOptionsArr}
+                onChange={handleStudyChange}
+              />
+              {isCustomStudy && (
+                <div style={{ marginTop: '8px', display: 'flex', gap: '8px', alignItems: 'center' }}>
+                  <input 
+                    type="number" 
+                    min="1"
+                    className="input-field" 
+                    value={Math.round(studyLengthMs / 60000) || ''} 
+                    onChange={e => setStudyLengthMs(parseInt(e.target.value || 0) * 60000)}
+                    style={{ width: '90px', padding: '6px 14px' }}
+                  />
+                  <span style={{ fontSize: '0.82rem', color: 'var(--color-text-muted)' }}>minutes</span>
+                </div>
+              )}
+            </div>
+            
+            <div style={{ flex: 1, minWidth: '160px', position: 'relative' }}>
+              <label style={{ fontSize: '0.82rem', display: 'block', marginBottom: '6px', color: 'var(--color-text-muted)', fontWeight: 400 }}>
+                Break Over After:
+              </label>
+              <CustomSelect 
+                value={isCustomBreak ? 'custom' : breakLengthMs} 
+                options={breakOptionsArr}
+                onChange={handleBreakChange}
+              />
+              {isCustomBreak && (
+                <div style={{ marginTop: '8px', display: 'flex', gap: '8px', alignItems: 'center' }}>
+                  <input 
+                    type="number" 
+                    min="1"
+                    className="input-field" 
+                    value={Math.round(breakLengthMs / 60000) || ''} 
+                    onChange={e => setBreakLengthMs(parseInt(e.target.value || 0) * 60000)}
+                    style={{ width: '90px', padding: '6px 14px' }}
+                  />
+                  <span style={{ fontSize: '0.82rem', color: 'var(--color-text-muted)' }}>minutes</span>
+                </div>
+              )}
+            </div>
           </div>
         </div>
-      </div>
 
-      <StudyHistory sessions={sessions} deleteSession={deleteSession} />
+        {/* Session History Card */}
+        <StudyHistory 
+          sessions={sessions} 
+          deleteSession={deleteSession} 
+          currentSegments={currentSegments} 
+          trackerState={trackerState} 
+        />
+      </div>
     </div>
   );
 }

@@ -18,7 +18,15 @@ export default function CustomSelect({ value, options, onChange, style }) {
   const selectedOption = options.find(opt => opt.value === value) || options[0];
 
   return (
-    <div ref={containerRef} style={{ position: 'relative', width: '100%', ...style }}>
+    <div 
+      ref={containerRef} 
+      style={{ 
+        position: 'relative', 
+        width: '100%', 
+        zIndex: isOpen ? 100 : 'auto', 
+        ...style 
+      }}
+    >
       <div 
         className="input-field" 
         style={{ 
@@ -27,54 +35,65 @@ export default function CustomSelect({ value, options, onChange, style }) {
           alignItems: 'center', 
           cursor: 'pointer', 
           userSelect: 'none',
-          paddingRight: '12px',
-          ...(isOpen ? { borderColor: 'var(--brand)', boxShadow: '0 0 0 3px var(--brand-light)' } : {})
+          padding: '8px 16px',
+          borderRadius: 'var(--radius-pill)',
+          background: 'var(--card-bg, rgba(255, 255, 255, 0.9))',
+          borderColor: isOpen ? 'var(--color-yellow)' : 'var(--color-gray-border)',
+          boxShadow: isOpen ? '0 0 0 3px rgba(255, 216, 77, 0.35)' : 'none'
         }}
         onClick={() => setIsOpen(!isOpen)}
       >
-        <span>{selectedOption ? selectedOption.label : ''}</span>
+        <span style={{ fontSize: '0.88rem', fontWeight: 500 }}>{selectedOption ? selectedOption.label : ''}</span>
         <ChevronDown 
-          size={16} 
-          color="var(--text-secondary)" 
-          style={{ transition: 'transform 0.2s', transform: isOpen ? 'rotate(180deg)' : 'none', flexShrink: 0, marginLeft: '8px' }} 
+          size={15} 
+          color="var(--color-text-muted)" 
+          style={{ 
+            transition: 'transform 0.2s cubic-bezier(0.16, 1, 0.3, 1)', 
+            transform: isOpen ? 'rotate(180deg)' : 'none', 
+            flexShrink: 0, 
+            marginLeft: '6px' 
+          }} 
         />
       </div>
       
       {isOpen && (
-        <div style={{
-          position: 'absolute',
-          top: '100%',
-          left: 0,
-          right: 0,
-          marginTop: '4px',
-          background: 'var(--card-bg)',
-          border: '1px solid var(--border-color)',
-          borderRadius: 'var(--radius-sm)',
-          boxShadow: 'var(--shadow-hover)',
-          zIndex: 50,
-          maxHeight: '250px',
-          overflowY: 'auto'
-        }}>
+        <div 
+          className="custom-select-menu"
+          style={{
+            position: 'absolute',
+            top: 'calc(100% + 6px)',
+            left: 0,
+            right: 0,
+            minWidth: '135px',
+            borderRadius: '16px',
+            zIndex: 1000,
+            maxHeight: '240px',
+            overflowY: 'auto',
+            padding: '4px'
+          }}
+        >
           {options.map((opt) => (
             <div 
               key={opt.value}
+              className="custom-select-item"
               onClick={() => {
                 onChange(opt.value);
                 setIsOpen(false);
               }}
               style={{
-                padding: '10px 12px',
+                padding: '8px 12px',
+                borderRadius: '12px',
                 cursor: 'pointer',
-                background: value === opt.value ? 'var(--brand-light)' : 'transparent',
-                color: value === opt.value ? 'var(--brand)' : 'var(--text-main)',
-                fontSize: '0.95rem',
-                transition: 'background 0.1s'
+                background: value === opt.value ? 'var(--color-yellow-soft)' : 'transparent',
+                fontSize: '0.88rem',
+                fontWeight: value === opt.value ? 500 : 400,
+                transition: 'all 0.15s ease'
               }}
               onMouseEnter={(e) => {
-                if (value !== opt.value) e.target.style.background = 'var(--bg-color)';
+                if (value !== opt.value) e.currentTarget.style.background = 'var(--color-neutral-bg)';
               }}
               onMouseLeave={(e) => {
-                if (value !== opt.value) e.target.style.background = 'transparent';
+                if (value !== opt.value) e.currentTarget.style.background = 'transparent';
               }}
             >
               {opt.label}

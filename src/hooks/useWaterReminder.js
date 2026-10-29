@@ -58,6 +58,13 @@ export function useWaterReminder(showNotification) {
     }));
   };
 
+  const setGlassCount = (newCount) => {
+    setGlassesHistory(prev => ({
+      ...prev,
+      [today]: Math.max(0, newCount)
+    }));
+  };
+
   const handleIntervalChange = (newInterval) => {
     setIntervalMs(newInterval);
     if (isRunning) {
@@ -74,6 +81,7 @@ export function useWaterReminder(showNotification) {
     startWater,
     stopWater,
     addGlass,
+    setGlassCount,
     handleIntervalChange
   };
 }

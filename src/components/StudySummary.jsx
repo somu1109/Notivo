@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { calculateSessionTotals, formatDuration } from '../utils/studyUtils';
 import { useLocalStorage } from '../hooks/useLocalStorage';
 import CustomSelect from './CustomSelect';
+import { ArrowUpRight, BookOpen } from 'lucide-react';
 
 export default function StudySummary({ sessions, currentSegments }) {
   const [dailyGoalHours, setDailyGoalHours] = useLocalStorage('study_daily_goal', 6);
@@ -35,38 +36,103 @@ export default function StudySummary({ sessions, currentSegments }) {
   const isCustomGoal = forceCustom || !goalOptions.includes(dailyGoalHours);
 
   return (
-    <div className="card">
-      <div className="card-title">
-        Today's Summary
+    <div className="card" style={{ padding: '14px 18px', margin: 0, position: 'relative', zIndex: 30 }}>
+      <div className="card-header-row" style={{ marginBottom: '8px' }}>
+        <div className="card-title">
+          <div style={{
+            width: '28px',
+            height: '28px',
+            borderRadius: '50%',
+            background: 'var(--color-yellow-soft)',
+            border: '1px solid var(--color-gray-border)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            color: '#1C1C1E'
+          }}>
+            <BookOpen size={14} />
+          </div>
+          <span style={{ fontSize: '1rem' }}>Today's Summary</span>
+        </div>
+        <div className="card-arrow-btn" style={{ width: '26px', height: '26px' }}>
+          <ArrowUpRight size={13} />
+        </div>
       </div>
       
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 'var(--sp-4)', marginBottom: 'var(--sp-5)' }}>
-        <div style={{ background: 'var(--study-light)', padding: 'var(--sp-4)', borderRadius: 'var(--radius-md)' }}>
-          <div style={{ fontSize: '0.9rem', color: 'var(--study)', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.5px' }}>Study Time</div>
-          <div className="tabular-nums" style={{ fontSize: '1.8rem', fontWeight: 700, color: 'var(--study)', marginTop: 'var(--sp-1)' }}>
+      {/* 3 Reference-Style Cards: Yellow Tint, White, and Black */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '10px', marginBottom: '12px' }}>
+        
+        {/* 1. Study Time (Yellow Tint #FFF8DE) */}
+        <div style={{ 
+          background: 'var(--color-yellow-tint)', 
+          border: '1px solid var(--color-yellow-soft)',
+          padding: '10px 16px', 
+          borderRadius: '18px',
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'space-between',
+          minHeight: '72px'
+        }}>
+          <div style={{ fontSize: '0.78rem', color: 'var(--color-text-muted)', fontWeight: 400 }}>
+            Study Time
+          </div>
+          <div className="tabular-nums" style={{ fontSize: '1.75rem', fontWeight: 300, color: 'var(--color-text-main)', lineHeight: 1 }}>
             {formatDuration(totalStudy)}
           </div>
         </div>
         
-        <div style={{ background: 'var(--break-light)', padding: 'var(--sp-4)', borderRadius: 'var(--radius-md)' }}>
-          <div style={{ fontSize: '0.9rem', color: 'var(--break)', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.5px' }}>Break Time</div>
-          <div className="tabular-nums" style={{ fontSize: '1.8rem', fontWeight: 700, color: 'var(--break)', marginTop: 'var(--sp-1)' }}>
+        {/* 2. Break Time */}
+        <div style={{ 
+          background: 'var(--card-bg)', 
+          border: '1px solid var(--color-gray-border)',
+          padding: '10px 16px', 
+          borderRadius: '18px',
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'space-between',
+          minHeight: '72px'
+        }}>
+          <div style={{ fontSize: '0.78rem', color: 'var(--color-text-muted)', fontWeight: 400 }}>
+            Break Time
+          </div>
+          <div className="tabular-nums" style={{ fontSize: '1.75rem', fontWeight: 300, color: 'var(--color-text-main)', lineHeight: 1 }}>
             {formatDuration(totalBreak)}
           </div>
         </div>
         
-        <div style={{ background: 'var(--bg-color)', padding: 'var(--sp-4)', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-color)' }}>
-          <div style={{ fontSize: '0.9rem', color: 'var(--text-secondary)', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.5px' }}>Sessions</div>
-          <div className="tabular-nums" style={{ fontSize: '1.8rem', fontWeight: 700, color: 'var(--text-main)', marginTop: 'var(--sp-1)' }}>
+        {/* 3. Sessions (Black Card #1C1C1E with White Text) */}
+        <div style={{ 
+          background: '#1C1C1E', 
+          border: '1px solid rgba(255, 255, 255, 0.08)',
+          padding: '10px 16px', 
+          borderRadius: '18px',
+          color: '#FFFFFF',
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'space-between',
+          minHeight: '72px'
+        }}>
+          <div style={{ fontSize: '0.78rem', color: 'rgba(255, 255, 255, 0.55)', fontWeight: 400 }}>
+            Sessions
+          </div>
+          <div className="tabular-nums" style={{ fontSize: '1.75rem', fontWeight: 300, color: '#FFFFFF', lineHeight: 1 }}>
             {todaySessions.length + (currentSegments.length > 0 ? 1 : 0)}
           </div>
         </div>
       </div>
 
-      <div style={{ background: 'var(--bg-color)', padding: 'var(--sp-4)', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-color)' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 'var(--sp-2)', flexWrap: 'wrap', gap: 'var(--sp-3)' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--sp-3)', flexWrap: 'wrap' }}>
-            <span style={{ fontSize: '0.9rem', fontWeight: 600 }}>Daily Goal</span>
+      {/* Pill-shaped Daily Goal Progress Track with Yellow Fill */}
+      <div style={{ 
+        background: 'var(--glass-subtle-bg, rgba(255, 255, 255, 0.45))', 
+        padding: '10px 14px', 
+        borderRadius: '16px', 
+        border: '1px solid var(--color-gray-border)',
+        position: 'relative',
+        zIndex: 10
+      }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px', flexWrap: 'wrap', gap: '8px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
+            <span style={{ fontSize: '0.82rem', fontWeight: 500, color: 'var(--color-text-main)' }}>Daily Target:</span>
             <CustomSelect 
               value={isCustomGoal ? 'custom' : dailyGoalHours} 
               onChange={val => {
@@ -89,7 +155,7 @@ export default function StudySummary({ sessions, currentSegments }) {
               style={{ width: '120px' }}
             />
             {isCustomGoal && (
-              <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--sp-2)' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
                 <input 
                   type="number"
                   min="0.1"
@@ -97,18 +163,32 @@ export default function StudySummary({ sessions, currentSegments }) {
                   className="input-field"
                   value={dailyGoalHours || ''}
                   onChange={e => setDailyGoalHours(Number(e.target.value))}
-                  style={{ width: '80px', padding: '6px 10px' }}
+                  style={{ width: '70px', padding: '4px 10px', height: '30px' }}
                 />
-                <span style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>hours</span>
+                <span style={{ fontSize: '0.78rem', color: 'var(--color-text-muted)' }}>hours</span>
               </div>
             )}
           </div>
-          <span style={{ fontSize: '0.95rem', fontWeight: 700, color: progressPercent >= 100 ? 'var(--study)' : 'var(--text-main)' }}>
-            {Math.round(progressPercent)}%
+
+          <span style={{ fontSize: '0.85rem', fontWeight: 500, color: 'var(--color-text-main)' }}>
+            {Math.round(progressPercent)}% Achieved
           </span>
         </div>
-        <div style={{ height: '8px', background: 'var(--border-color)', borderRadius: '4px', overflow: 'hidden' }}>
-          <div style={{ height: '100%', background: 'var(--study)', width: `${progressPercent}%`, transition: 'width 0.3s ease' }}></div>
+
+        {/* Yellow Fill Pill Track */}
+        <div style={{ 
+          height: '7px', 
+          background: 'var(--color-neutral-bg)', 
+          borderRadius: 'var(--radius-pill)', 
+          overflow: 'hidden' 
+        }}>
+          <div style={{ 
+            height: '100%', 
+            background: 'var(--color-yellow)', 
+            width: `${progressPercent}%`, 
+            borderRadius: 'var(--radius-pill)',
+            transition: 'width 0.3s cubic-bezier(0.16, 1, 0.3, 1)' 
+          }} />
         </div>
       </div>
     </div>

@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Plus } from 'lucide-react';
 
 export default function TaskForm({ addTask }) {
   const [title, setTitle] = useState('');
@@ -11,7 +12,7 @@ export default function TaskForm({ addTask }) {
     setError('');
 
     if (!title.trim()) {
-      setError('Task title cannot be empty');
+      setError('Goal title cannot be empty');
       return;
     }
 
@@ -22,7 +23,7 @@ export default function TaskForm({ addTask }) {
 
     const datetime = new Date(`${date}T${time}`);
     if (datetime.getTime() <= Date.now()) {
-      setError('Task time must be in the future');
+      setError('Goal target time must be in the future');
       return;
     }
 
@@ -33,35 +34,57 @@ export default function TaskForm({ addTask }) {
   };
 
   return (
-    <div style={{ marginBottom: '0px' }}>
-      <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 'var(--sp-4)' }}>
-        {error && <div style={{ color: 'var(--tasks)', fontSize: '0.9rem', background: 'var(--tasks-light)', padding: 'var(--sp-2)', borderRadius: 'var(--radius-sm)' }}>{error}</div>}
+    <div>
+      <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+        {error && (
+          <div style={{ 
+            color: '#1C1C1E', 
+            fontSize: '0.82rem', 
+            fontWeight: 500,
+            background: 'var(--color-yellow-soft)', 
+            border: '1px solid var(--color-yellow)',
+            padding: '8px 14px', 
+            borderRadius: 'var(--radius-input)',
+            boxShadow: '0 2px 8px rgba(0, 0, 0, 0.04)'
+          }}>
+            {error}
+          </div>
+        )}
         
         <input 
           type="text" 
-          placeholder="What do you need to be reminded of?" 
+          placeholder="What goal or milestone do you want to schedule?" 
           value={title} 
           onChange={e => setTitle(e.target.value)} 
           className="input-field"
+          style={{ height: '38px', padding: '0 14px', fontSize: '0.88rem' }}
         />
         
-        <div className="form-row">
+        <div className="form-row" style={{ gap: '10px' }}>
           <input 
             type="date" 
             value={date} 
             onChange={e => setDate(e.target.value)}
             className="input-field"
-            style={{ flex: 1, minWidth: '150px' }}
+            style={{ flex: 1, minWidth: '140px', height: '38px', padding: '0 12px', fontSize: '0.84rem' }}
           />
           <input 
             type="time" 
             value={time} 
             onChange={e => setTime(e.target.value)} 
             className="input-field"
-            style={{ flex: 1, minWidth: '150px' }}
+            style={{ flex: 1, minWidth: '140px', height: '38px', padding: '0 12px', fontSize: '0.84rem' }}
           />
-          <button type="submit" className="btn btn-primary" style={{ background: 'var(--study)', minWidth: '120px', height: '42px' }}>
-            Add Task
+          <button 
+            type="submit" 
+            className="btn btn-black" 
+            style={{ 
+              minWidth: '120px', 
+              height: '38px',
+              fontSize: '0.84rem' 
+            }}
+          >
+            <Plus size={15} /> Add Goal
           </button>
         </div>
       </form>

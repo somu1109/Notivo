@@ -49,6 +49,14 @@ export function useGoals() {
     setGoals(goals.filter(g => g.id !== id));
   };
 
+  const clearTodayGoals = () => {
+    setGoals(goals.filter(g => g.date !== currentDate));
+  };
+
+  const clearAllGoals = () => {
+    setGoals([]);
+  };
+
   const bringBackUnfinished = () => {
     const dates = [...new Set(goals.map(g => g.date))];
     if (dates.length < 2) return; // Only one day exists
@@ -79,6 +87,8 @@ export function useGoals() {
     toggleGoal,
     editGoal,
     deleteGoal,
+    clearTodayGoals,
+    clearAllGoals,
     bringBackUnfinished
   };
 }

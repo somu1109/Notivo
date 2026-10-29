@@ -66,34 +66,37 @@ export function useStudyTimer(showNotification) {
   };
 
   const stopSession = (endTimeOverride) => {
-    if (trackerState === 'Idle') return;
-    const now = endTimeOverride || Date.now();
-    const updatedSegments = [...currentSegments];
+    if (trackerState === 'Idle' && (!currentSegments || currentSegments.length === 0)) return;
+    const now = (typeof endTimeOverride === 'number') ? endTimeOverride : Date.now();
+    const updatedSegments = Array.isArray(currentSegments) ? [...currentSegments] : [];
     if (updatedSegments.length > 0) {
       updatedSegments[updatedSegments.length - 1].end = now;
     }
 
-    // Calculate total duration for this session to ignore < 5s sessions
+    // Calculate total duration for this session
     let totalMs = 0;
     updatedSegments.forEach(seg => {
-      totalMs += ((seg.end || now) - seg.start);
+      const segEnd = typeof seg.end === 'number' ? seg.end : now;
+      totalMs += Math.max(0, segEnd - seg.start);
     });
 
-    if (totalMs >= 5000) {
+    // Record session if at least 1 second (1000ms)
+    if (totalMs >= 1000 && updatedSegments.length > 0) {
       const newSession = {
-        id: Date.now().toString() + Math.random(),
+        id: `${Date.now()}_${Math.random().toString(36).substring(2, 9)}`,
         date: new Date(updatedSegments[0].start).toDateString(),
         segments: updatedSegments
       };
-      setSessions([...sessions, newSession]);
+      setSessions(prev => [...(Array.isArray(prev) ? prev : []), newSession]);
     }
 
     setTrackerState('Idle');
     setCurrentSegments([]);
+    setNotifiedSegments([]);
   };
 
   const deleteSession = (id) => {
-    setSessions(sessions.filter(s => s.id !== id));
+    setSessions(prev => (Array.isArray(prev) ? prev.filter(s => s.id !== id) : []));
   };
 
   return {

@@ -63,5 +63,9 @@ export function useTasks(showNotification) {
     setTasks(tasks.filter(t => t.id !== id));
   };
 
-  return { tasks, addTask, updateTaskStatus, deleteTask };
+  const clearAllTasks = () => {
+    setTasks([]);
+  };
+
+  return { tasks, addTask, updateTaskStatus, deleteTask, clearAllTasks };
 }
