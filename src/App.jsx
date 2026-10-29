@@ -166,7 +166,7 @@ export default function App() {
   const [isDark, setIsDark] = useState(() => {
     const saved = localStorage.getItem('notivo_theme');
     if (saved) return saved === 'dark';
-    return window.matchMedia('(prefers-color-scheme: dark)').matches;
+    return false; // Default to light theme
   });
 
   useEffect(() => {
