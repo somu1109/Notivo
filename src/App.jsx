@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, lazy, Suspense } from 'react';
 import { Routes, Route, NavLink, Navigate } from 'react-router-dom';
 import { useAppContext } from './context/AppContext';
 import { 
@@ -6,14 +6,39 @@ import {
 } from 'lucide-react';
 import './App.css';
 import logo from './assets/Notivo.png';
-import wordmark from './assets/NotivoWordmark.png';
+import wordmark from './assets/NotivoWordmark.svg';
 
-import Home from './pages/Home';
-import StudyPage from './pages/StudyPage';
-import GoalsPage from './pages/GoalsPage';
-import TasksPage from './pages/TasksPage';
-import WaterPage from './pages/WaterPage';
-import DashboardPage from './pages/DashboardPage';
+const Home = lazy(() => import('./pages/Home'));
+const StudyPage = lazy(() => import('./pages/StudyPage'));
+const GoalsPage = lazy(() => import('./pages/GoalsPage'));
+const TasksPage = lazy(() => import('./pages/TasksPage'));
+const WaterPage = lazy(() => import('./pages/WaterPage'));
+const DashboardPage = lazy(() => import('./pages/DashboardPage'));
+
+function PageFallback() {
+  return (
+    <div style={{
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      justifyContent: 'center',
+      minHeight: '260px',
+      gap: '12px'
+    }}>
+      <div style={{
+        width: '30px',
+        height: '30px',
+        border: '3px solid rgba(255, 216, 77, 0.25)',
+        borderTop: '3px solid #FFD84D',
+        borderRadius: '50%',
+        animation: 'spin 0.7s linear infinite'
+      }} />
+      <span style={{ fontSize: '0.82rem', color: 'var(--color-text-muted)', fontWeight: 500 }}>
+        Loading Notivo...
+      </span>
+    </div>
+  );
+}
 
 function TopNav({ isDark, toggleTheme, studyRunning, waterRunning }) {
   const { notification, study, user } = useAppContext();
@@ -368,16 +393,18 @@ export default function App() {
           </div>
         )}
 
-        <Routes>
-          <Route path="/" element={<Navigate to="/dashboard" replace />} />
-          <Route path="/dashboard" element={<DashboardPage />} />
-          <Route path="/home" element={<Home />} />
-          <Route path="/study" element={<StudyPage />} />
-          <Route path="/tasks" element={<GoalsPage />} />
-          <Route path="/goals" element={<TasksPage />} />
-          <Route path="/water" element={<WaterPage />} />
-          <Route path="*" element={<Navigate to="/dashboard" replace />} />
-        </Routes>
+        <Suspense fallback={<PageFallback />}>
+          <Routes>
+            <Route path="/" element={<Navigate to="/dashboard" replace />} />
+            <Route path="/dashboard" element={<DashboardPage />} />
+            <Route path="/home" element={<Home />} />
+            <Route path="/study" element={<StudyPage />} />
+            <Route path="/tasks" element={<GoalsPage />} />
+            <Route path="/goals" element={<TasksPage />} />
+            <Route path="/water" element={<WaterPage />} />
+            <Route path="*" element={<Navigate to="/dashboard" replace />} />
+          </Routes>
+        </Suspense>
       </main>
     </div>
   );

@@ -1,4 +1,3 @@
-import { jsPDF } from 'jspdf';
 import { calculateSessionTotals, formatDuration } from './studyUtils';
 import notivoLogoUrl from '../assets/Notivo.png';
 
@@ -26,6 +25,7 @@ function loadBase64Image(url) {
 }
 
 export async function exportNotivoBackupPDF({ study, water, goals, tasks, kpiData, userName = 'Somu' }) {
+  const { jsPDF } = await import('jspdf');
   // Preload Notivo logo for branded header
   let logoData = null;
   try {
