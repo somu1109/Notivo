@@ -2,7 +2,7 @@ import { useAppContext } from '../context/AppContext';
 import { GlassWater, Play, Square, Droplets, ArrowUpRight } from 'lucide-react';
 
 export default function WaterPage() {
-  const { water } = useAppContext();
+  const { water, user } = useAppContext();
   const {
     isRunning,
     intervalMs,
@@ -46,7 +46,7 @@ export default function WaterPage() {
           Water &amp; Hydration
         </h1>
         <p style={{ color: 'var(--color-text-muted)', fontSize: '0.86rem', marginTop: '2px' }}>
-          Maintain peak cognitive performance with rhythmic hydration alerts.
+          {user?.greeting ? `${user.greeting} • ` : ''}Maintain peak cognitive performance with rhythmic hydration alerts.
         </p>
       </div>
 

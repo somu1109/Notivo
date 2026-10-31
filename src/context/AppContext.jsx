@@ -19,6 +19,23 @@ export function AppProvider({ children }) {
   
   const lastActiveContext = useLastActive();
 
+  // User Profile & Greeting State
+  const [userName, setUserName] = useState(() => localStorage.getItem('notivo_user_name') || 'Somu');
+
+  useEffect(() => {
+    localStorage.setItem('notivo_user_name', userName);
+  }, [userName]);
+
+  const getGreeting = () => {
+    const hour = new Date().getHours();
+    let wish = 'Good Morning';
+    if (hour >= 12 && hour < 17) wish = 'Good Afternoon';
+    else if (hour >= 17 && hour < 21) wish = 'Good Evening';
+    else if (hour >= 21 || hour < 4) wish = 'Good Night';
+    const cleanName = userName.trim() || 'Somu';
+    return `${wish}, ${cleanName}`;
+  };
+
   // Handle Goal Notifications here at the top level
   const { todayGoals } = goalsContext;
   const [morningReminder, setMorningReminder] = useState(() => JSON.parse(localStorage.getItem('goals_morning_reminder') ?? 'true'));
@@ -81,7 +98,12 @@ export function AppProvider({ children }) {
     },
     water: waterContext,
     tasks: tasksContext,
-    lastActive: lastActiveContext
+    lastActive: lastActiveContext,
+    user: {
+      userName,
+      setUserName,
+      greeting: getGreeting()
+    }
   };
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;

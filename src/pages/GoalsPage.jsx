@@ -4,7 +4,7 @@ import GoalsHistory from '../components/GoalsHistory';
 import { ArrowUpRight, Bell } from 'lucide-react';
 
 export default function GoalsPage() {
-  const { goals } = useAppContext();
+  const { goals, user } = useAppContext();
   const { 
     currentDate,
     morningReminder, 
@@ -26,7 +26,7 @@ export default function GoalsPage() {
           Daily Tasks &amp; Habits
         </h1>
         <p style={{ color: 'var(--color-text-muted)', fontSize: '0.86rem', marginTop: '2px' }}>
-          Define your daily tasks and maintain an unbroken productive chain.
+          {user?.greeting ? `${user.greeting} • ` : ''}Define your daily tasks and maintain an unbroken productive chain.
         </p>
       </div>
 

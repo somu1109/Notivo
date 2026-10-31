@@ -105,6 +105,19 @@
   box-sizing: border-box;
   margin: 0;
   padding: 0;
+  scrollbar-width: none !important; /* Firefox */
+  -ms-overflow-style: none !important; /* IE and Edge */
+}
+
+/* Hide scrollbar for Chrome, Safari, Edge, Opera everywhere */
+*::-webkit-scrollbar,
+html::-webkit-scrollbar,
+body::-webkit-scrollbar,
+#root::-webkit-scrollbar {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+  background: transparent !important;
 }
 
 html, body {
@@ -115,6 +128,8 @@ html, body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   transition: background-color 0.3s ease, color 0.3s ease;
+  scrollbar-width: none !important;
+  -ms-overflow-style: none !important;
 }
 
 body {
@@ -188,27 +203,23 @@ button, input, select {
   gap: 12px;
   position: relative;
   z-index: 30;
-}
-
-@media (max-width: 768px) {
-  .app-topbar {
-    padding: 16px 20px 12px;
-  }
+  box-sizing: border-box;
 }
 
 /* Left: Logo Pill */
 .logo-pill {
   display: inline-flex;
   align-items: center;
-  gap: 10px;
-  padding: 6px 16px 6px 10px;
+  gap: 8px;
+  padding: 5px 14px 5px 8px;
   background: var(--card-bg);
   border: 1px solid var(--card-border);
   border-radius: var(--radius-pill);
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03);
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.03);
   backdrop-filter: var(--glass-blur);
   -webkit-backdrop-filter: var(--glass-blur);
   transition: transform 0.2s ease;
+  flex-shrink: 0;
 }
 
 .logo-pill:hover {
@@ -216,24 +227,26 @@ button, input, select {
 }
 
 .logo-pill-icon {
-  height: 30px;
-  width: 30px;
+  height: 40px;
+  width: 40px;
   object-fit: contain;
   display: block;
+  flex-shrink: 0;
 }
 
 .logo-pill-wordmark {
-  height: 26px;
+  height: 20px;
   width: auto;
-  max-width: 120px;
+  max-width: 90px;
   object-fit: contain;
   display: block;
   filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.16));
+  flex-shrink: 0;
 }
 
 .logo-pill img:not(.logo-pill-icon):not(.logo-pill-wordmark) {
-  height: 28px;
-  width: 28px;
+  height: 36px;
+  width: 36px;
   object-fit: contain;
 }
 
@@ -249,13 +262,14 @@ button, input, select {
   display: inline-flex;
   align-items: center;
   gap: 8px;
+  flex-shrink: 0;
 }
 
 .topbar-clock-pill {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  height: 42px;
+  height: 40px;
   padding: 0 12px;
   background: var(--card-bg);
   border: 1px solid var(--card-border);
@@ -271,6 +285,7 @@ button, input, select {
   letter-spacing: -0.01em;
   box-sizing: border-box;
   transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+  flex-shrink: 0;
 }
 
 .topbar-clock-pill:hover {
@@ -293,6 +308,11 @@ button, input, select {
   letter-spacing: 0.02em;
 }
 
+.topbar-clock-seconds {
+  font-weight: 500;
+  color: var(--color-text-muted);
+}
+
 .topbar-clock-ampm {
   font-size: 0.64rem;
   font-weight: 700;
@@ -302,33 +322,19 @@ button, input, select {
   margin-left: 1px;
 }
 
-@media (max-width: 640px) {
-  .topbar-clock-pill {
-    padding: 0 8px;
-    height: 36px;
-    font-size: 0.7rem;
-    gap: 4px;
-  }
-}
-
 /* Center: Nav Items Pill Container */
 .nav-pill-container {
   display: flex;
   align-items: center;
-  gap: 3px;
-  padding: 3px;
+  gap: 4px;
+  padding: 4px;
   background: var(--card-bg);
   border: 1px solid var(--card-border);
   border-radius: var(--radius-pill);
   backdrop-filter: var(--glass-blur);
   -webkit-backdrop-filter: var(--glass-blur);
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.03);
-}
-
-@media (max-width: 880px) {
-  .nav-pill-container {
-    display: none;
-  }
+  box-sizing: border-box;
 }
 
 .nav-pill {
@@ -340,8 +346,15 @@ button, input, select {
   transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
   display: flex;
   align-items: center;
-  gap: 5px;
+  gap: 6px;
   position: relative;
+  white-space: nowrap;
+}
+
+.nav-pill-icon {
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
 }
 
 .nav-pill:hover {
@@ -374,38 +387,159 @@ button, input, select {
 .topbar-actions {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
+  flex-shrink: 0;
 }
 
-.settings-pill {
+.install-pill-btn {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  padding: 8px 16px;
-  background: var(--card-bg);
-  border: 1px solid var(--card-border);
+  gap: 7px;
+  height: 34px;
+  padding: 0 14px;
+  background: var(--color-yellow);
+  color: #1C1C1E;
+  border: 1px solid rgba(0, 0, 0, 0.08);
   border-radius: var(--radius-pill);
-  font-size: 0.88rem;
-  font-weight: 400;
-  color: var(--color-text-main);
-  backdrop-filter: var(--glass-blur);
-  -webkit-backdrop-filter: var(--glass-blur);
+  font-size: 0.8rem;
+  font-weight: 600;
   cursor: pointer;
-  transition: all 0.2s ease;
+  box-shadow: 0 3px 10px rgba(255, 216, 77, 0.35);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  user-select: none;
+  flex-shrink: 0;
 }
 
-.settings-pill:hover {
+.install-pill-btn:hover {
   transform: translateY(-1px);
-  background: rgba(255, 255, 255, 0.8);
+  background: var(--color-yellow-deep);
+  box-shadow: 0 4px 14px rgba(255, 216, 77, 0.45);
 }
 
-@media (max-width: 600px) {
-  .settings-pill span {
-    display: none;
+.install-pill-btn:active {
+  transform: scale(0.97);
+}
+
+.install-pill-icon {
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+}
+
+/* Responsive Topbar & Full Navbar Layout */
+@media (max-width: 880px) {
+  .app-topbar {
+    flex-wrap: wrap;
+    padding: 10px 14px 6px;
+    gap: 8px 10px;
   }
-  .settings-pill {
-    padding: 8px;
-    border-radius: 50%;
+
+  .topbar-brand-group {
+    order: 1;
+  }
+
+  .topbar-actions {
+    order: 2;
+    margin-left: auto;
+  }
+
+  .nav-pill-container {
+    order: 3;
+    display: grid !important;
+    grid-template-columns: repeat(6, 1fr) !important;
+    width: 100% !important;
+    overflow: hidden !important;
+    padding: 3px !important;
+    gap: 3px !important;
+    box-sizing: border-box !important;
+  }
+
+  .nav-pill {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 5px 2px 4px !important;
+    min-width: 0 !important;
+    border-radius: 12px !important;
+    text-align: center !important;
+    gap: 2px !important;
+  }
+
+  .nav-pill-icon {
+    width: 16px !important;
+    height: 16px !important;
+  }
+
+  .nav-pill span {
+    font-size: 0.65rem !important;
+    font-weight: 500 !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    max-width: 100% !important;
+    line-height: 1.1 !important;
+  }
+
+  .nav-pill-dot {
+    position: absolute !important;
+    top: 3px !important;
+    right: 5px !important;
+    width: 5px !important;
+    height: 5px !important;
+  }
+}
+
+@media (max-width: 768px) {
+  /* On mobile / small screens: ONLY show the logo (hide wordmark text) */
+  .logo-pill-wordmark {
+    display: none !important;
+  }
+
+  .logo-pill {
+    padding: 3px !important;
+    width: 42px !important;
+    height: 42px !important;
+    border-radius: 50% !important;
+    justify-content: center !important;
+    gap: 0 !important;
+    box-sizing: border-box !important;
+  }
+
+  .logo-pill-icon {
+    height: 34px !important;
+    width: 34px !important;
+  }
+
+  .topbar-clock-pill {
+    display: none !important;
+  }
+}
+
+@media (max-width: 640px) {
+  .app-topbar {
+    padding: 8px 10px 6px;
+    gap: 6px 8px;
+  }
+
+  .topbar-actions {
+    gap: 5px;
+  }
+
+  .round-btn {
+    width: 34px;
+    height: 34px;
+  }
+
+  .install-pill-btn {
+    width: 34px;
+    height: 34px;
+    padding: 0;
+    justify-content: center;
+  }
+
+  .install-pill-btn span {
+    display: none;
   }
 }
 
@@ -445,13 +579,21 @@ button, input, select {
   flex: 1;
   padding: 6px 24px 14px;
   overflow-y: auto;
+  scrollbar-width: none !important;
+  -ms-overflow-style: none !important;
   position: relative;
   z-index: 1;
 }
 
+.main-content::-webkit-scrollbar {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+}
+
 @media (max-width: 768px) {
   .main-content {
-    padding: 6px 12px 80px;
+    padding: 6px 12px 24px;
   }
 }
 
@@ -980,44 +1122,10 @@ input:checked + .toggle-slider:before {
 }
 
 /* ══════════════════════════════════════════════════════════════════════
-   FLOATING BOTTOM DOCK FOR MOBILE (< 768px)
+   FLOATING BOTTOM DOCK (DEPRECATED - NAVBAR IS UNIFIED IN TOPBAR)
    ══════════════════════════════════════════════════════════════════════ */
 .mobile-bottom-dock {
-  display: none;
-  position: fixed;
-  bottom: 20px;
-  left: 50%;
-  transform: translateX(-50%);
-  background: #1C1C1E;
-  padding: 6px 12px;
-  border-radius: var(--radius-pill);
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
-  z-index: 99;
-  gap: 6px;
-  align-items: center;
-}
-
-@media (max-width: 768px) {
-  .mobile-bottom-dock {
-    display: flex;
-  }
-}
-
-.mobile-dock-item {
-  width: 44px;
-  height: 44px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #A8A8A4;
-  transition: all 0.2s ease;
-  position: relative;
-}
-
-.mobile-dock-item.active {
-  background: var(--color-yellow);
-  color: #1C1C1E;
+  display: none !important;
 }
 
 /* ══════════════════════════════════════════════════════════════════════
@@ -1028,6 +1136,7 @@ input:checked + .toggle-slider:before {
   top: 70px;
   right: 36px;
   width: 290px;
+  max-width: calc(100vw - 32px);
   z-index: 100;
   padding: 20px;
   background: var(--card-bg);
@@ -1037,6 +1146,15 @@ input:checked + .toggle-slider:before {
   border-radius: 20px;
   box-shadow: 0 16px 40px rgba(0, 0, 0, 0.15);
   animation: popIn 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@media (max-width: 480px) {
+  .popover {
+    right: 0 !important;
+    width: 280px;
+    max-width: calc(100vw - 20px);
+    padding: 16px;
+  }
 }
 
 @keyframes popIn {

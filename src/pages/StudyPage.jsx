@@ -6,7 +6,7 @@ import CustomSelect from '../components/CustomSelect';
 import { ArrowUpRight, Sliders } from 'lucide-react';
 
 export default function StudyPage() {
-  const { study } = useAppContext();
+  const { study, user } = useAppContext();
   const { 
     sessions, 
     currentSegments, 
@@ -67,7 +67,7 @@ export default function StudyPage() {
           Focus &amp; Study
         </h1>
         <p style={{ color: 'var(--color-text-muted)', fontSize: '0.86rem', marginTop: '2px' }}>
-          Organize deep work blocks with rhythmic break intervals.
+          {user?.greeting ? `${user.greeting} • ` : ''}Organize deep work blocks with rhythmic break intervals.
         </p>
       </div>
 

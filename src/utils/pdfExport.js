@@ -25,7 +25,7 @@ function loadBase64Image(url) {
   });
 }
 
-export async function exportNotivoBackupPDF({ study, water, goals, tasks, kpiData }) {
+export async function exportNotivoBackupPDF({ study, water, goals, tasks, kpiData, userName = 'Somu' }) {
   // Preload Notivo logo for branded header
   let logoData = null;
   try {
@@ -103,7 +103,8 @@ export async function exportNotivoBackupPDF({ study, water, goals, tasks, kpiDat
     const nowStr = new Date().toLocaleDateString(undefined, { 
       year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' 
     });
-    doc.text(`Backup Export: ${nowStr}`, pageWidth - margin, yPos + 5.5, { align: 'right' });
+    const userPrefix = userName ? `User: ${userName.trim()}  |  ` : '';
+    doc.text(`${userPrefix}Backup: ${nowStr}`, pageWidth - margin, yPos + 5.5, { align: 'right' });
 
     yPos += 11;
 
@@ -425,7 +426,7 @@ export async function exportNotivoBackupPDF({ study, water, goals, tasks, kpiDat
     doc.setFont('helvetica', 'normal');
     doc.setFontSize(8);
     doc.setTextColor(...textMuted);
-    doc.text('Notivo Productivity App | somu', margin, pageHeight - 7.5);
+    doc.text(`Notivo Productivity App | ${userName?.trim() || 'Somu'}`, margin, pageHeight - 7.5);
     doc.text(`Page ${i} of ${totalPages}`, pageWidth - margin, pageHeight - 7.5, { align: 'right' });
   }
 

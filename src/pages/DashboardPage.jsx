@@ -75,7 +75,7 @@ const AxisTick = ({ x, y, payload }) => (
 );
 
 function DashboardPageInner() {
-  const { study, water, goals, tasks } = useAppContext();
+  const { study, water, goals, tasks, user } = useAppContext();
   const [isClearDataModalOpen, setIsClearDataModalOpen] = useState(false);
 
   /* ── KPI calculations ── */
@@ -178,7 +178,14 @@ function DashboardPageInner() {
   /* ── Export PDF Backup with Notivo Template ── */
   const handleExportBackup = async () => {
     try {
-      await exportNotivoBackupPDF({ study, water, goals, tasks, kpiData });
+      await exportNotivoBackupPDF({ 
+        study, 
+        water, 
+        goals, 
+        tasks, 
+        kpiData, 
+        userName: user?.userName || 'Somu' 
+      });
     } catch (err) {
       console.error('Failed to export PDF:', err);
       alert('Could not generate PDF backup. Please try again.');
@@ -223,7 +230,7 @@ function DashboardPageInner() {
           color: 'var(--color-text-main)',
           lineHeight: 1.15
         }}>
-          Welcome in, Notivo
+          {user?.greeting || 'Welcome in, Notivo'}
         </h1>
       </div>
 

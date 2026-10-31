@@ -4,7 +4,7 @@ import TaskList from '../components/TaskList';
 import { Target, ArrowUpRight } from 'lucide-react';
 
 export default function TasksPage() {
-  const { tasks: tasksContext } = useAppContext();
+  const { tasks: tasksContext, user } = useAppContext();
   const { tasks, addTask, updateTaskStatus, deleteTask, clearAllTasks } = tasksContext;
 
   return (
@@ -14,7 +14,7 @@ export default function TasksPage() {
           Goals &amp; Milestones
         </h1>
         <p style={{ color: 'var(--color-text-muted)', fontSize: '0.86rem', marginTop: '2px' }}>
-          Schedule time-sensitive goals and stay on top of critical future milestones.
+          {user?.greeting ? `${user.greeting} • ` : ''}Schedule time-sensitive goals and stay on top of critical future milestones.
         </p>
       </div>
 

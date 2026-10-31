@@ -7,7 +7,7 @@ import {
 } from 'lucide-react';
 
 export default function Home() {
-  const { study, water, goals, tasks } = useAppContext();
+  const { study, water, goals, tasks, user } = useAppContext();
   const { 
     trackerState, 
     currentSegments, 
@@ -171,7 +171,24 @@ export default function Home() {
   }
 
   return (
-    <div className="home-grid">
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', paddingBottom: '10px' }}>
+      {/* ═══ Top Greeting ═══ */}
+      <div>
+        <h1 style={{ 
+          fontSize: 'clamp(1.6rem, 2.4vw, 2.1rem)', 
+          fontWeight: 300, 
+          letterSpacing: '-0.03em', 
+          color: 'var(--color-text-main)',
+          lineHeight: 1.15
+        }}>
+          {user?.greeting || 'Good Morning, Somu'}
+        </h1>
+        <p style={{ color: 'var(--color-text-muted)', fontSize: '0.86rem', marginTop: '2px' }}>
+          Here is your daily productivity, focus, and hydration overview.
+        </p>
+      </div>
+
+      <div className="home-grid">
       
       {/* ── CARD 1: Time Tracker (Compact Crextio Dial) ── */}
       <div className="card" style={{ 
@@ -851,5 +868,6 @@ export default function Home() {
       </div>
 
     </div>
+  </div>
   );
 }
