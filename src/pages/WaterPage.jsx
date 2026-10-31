@@ -1,8 +1,9 @@
 import { useAppContext } from '../context/AppContext';
-import { GlassWater, Play, Square, Droplets, ArrowUpRight } from 'lucide-react';
+import { GlassWater, Play, Square, Droplets, ArrowUpRight, Bell, BellOff } from 'lucide-react';
 
 export default function WaterPage() {
-  const { water, user } = useAppContext();
+  const { water, notification, user } = useAppContext();
+  const { permission, requestPermission, showNotification } = notification;
   const {
     isRunning,
     intervalMs,
@@ -30,9 +31,15 @@ export default function WaterPage() {
     { label: '2h', value: 7200000 }
   ];
 
-  const toggleTimer = () => {
-    if (isRunning) stopWater();
-    else startWater();
+  const toggleTimer = async () => {
+    if (isRunning) {
+      stopWater();
+    } else {
+      if (permission === 'default') {
+        await requestPermission();
+      }
+      startWater();
+    }
   };
 
   // 12 glasses default as requested
@@ -160,6 +167,53 @@ export default function WaterPage() {
             )}
           </button>
         </div>
+
+        {/* Notification Status Banner */}
+        {permission === 'denied' && (
+          <div style={{
+            background: 'rgba(239, 68, 68, 0.08)',
+            border: '1px solid rgba(239, 68, 68, 0.25)',
+            borderRadius: '12px',
+            padding: '8px 12px',
+            fontSize: '0.78rem',
+            color: '#DC2626',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px',
+            marginBottom: '12px'
+          }}>
+            <BellOff size={14} style={{ flexShrink: 0 }} />
+            <span>Notifications are blocked in your browser. Click the lock icon 🔒 next to the URL in your address bar to allow alerts.</span>
+          </div>
+        )}
+
+        {permission === 'default' && (
+          <div style={{
+            background: 'rgba(255, 216, 77, 0.15)',
+            border: '1px solid rgba(255, 216, 77, 0.4)',
+            borderRadius: '12px',
+            padding: '8px 12px',
+            fontSize: '0.78rem',
+            color: 'var(--color-text-main)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            gap: '8px',
+            marginBottom: '12px'
+          }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+              <Bell size={14} style={{ color: 'var(--color-yellow-deep)', flexShrink: 0 }} />
+              <span>Allow notifications to receive hydration reminders.</span>
+            </div>
+            <button
+              onClick={requestPermission}
+              className="btn btn-black"
+              style={{ height: '26px', padding: '0 10px', fontSize: '0.72rem', flexShrink: 0 }}
+            >
+              Enable
+            </button>
+          </div>
+        )}
 
         <div className="dotted-divider" style={{ margin: '6px 0 10px' }}></div>
 

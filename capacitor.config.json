@@ -1,0 +1,14 @@
+{
+  "appId": "com.notivo.app",
+  "appName": "Notivo",
+  "webDir": "dist",
+  "server": {
+    "androidScheme": "https"
+  },
+  "plugins": {
+    "LocalNotifications": {
+      "iconColor": "#FFD84D",
+      "sound": "beep.wav"
+    }
+  }
+}

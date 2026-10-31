@@ -1,37 +1,31 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
+import { notificationService, playWaterChime } from '../services/notificationService';
+
+export { playWaterChime as playNotificationSound };
 
 export function useNotification() {
-  const [isSupported] = useState('Notification' in window);
-  const [permission, setPermission] = useState(() => 
-    isSupported ? Notification.permission : 'default'
-  );
+  const [isSupported] = useState(() => typeof window !== 'undefined' && ('Notification' in window || notificationService.isNative()));
+  const [permission, setPermission] = useState(() => {
+    if (typeof window !== 'undefined' && 'Notification' in window) {
+      return Notification.permission;
+    }
+    return 'default';
+  });
+
+  useEffect(() => {
+    notificationService.checkPermission().then(setPermission);
+  }, []);
 
   const requestPermission = async () => {
-    if (!isSupported) return;
-    try {
-      const perm = await Notification.requestPermission();
-      setPermission(perm);
-    } catch (err) {
-      console.error('Failed to request notification permission', err);
-    }
+    await notificationService.requestPermission();
+    const current = await notificationService.checkPermission();
+    setPermission(current);
+    return current;
   };
 
-  const showNotification = useCallback((title, options, urlPath) => {
-    if (!isSupported || permission !== 'granted') return;
-    
-    try {
-      const notification = new Notification(title, options);
-      notification.onclick = () => {
-        window.focus();
-        if (urlPath) {
-          window.location.href = urlPath;
-        }
-        notification.close();
-      };
-    } catch (err) {
-      console.error('Failed to show notification', err);
-    }
-  }, [isSupported, permission]);
+  const showNotification = useCallback(async (title, options = {}, urlPath = '/') => {
+    return await notificationService.showImmediate(title, options, urlPath);
+  }, []);
 
   return { permission, isSupported, requestPermission, showNotification };
 }

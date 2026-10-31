@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useLocalStorage } from './useLocalStorage';
+import { notificationService } from '../services/notificationService';
 
 export function useWaterReminder(showNotification) {
   const [isRunning, setIsRunning] = useLocalStorage('water_isRunning', false);
@@ -10,9 +11,6 @@ export function useWaterReminder(showNotification) {
 
   const today = new Date().toDateString();
   const glasses = { count: glassesHistory[today] || 0, date: today };
-
-  // Note: the useEffect that reset glasses is no longer needed because 
-  // we dynamically read glassesHistory[today] which is 0 if undefined.
 
   useEffect(() => {
     if (!isRunning || !nextReminder) {
@@ -25,10 +23,10 @@ export function useWaterReminder(showNotification) {
       const remaining = nextReminder - now;
 
       if (remaining <= 0) {
-        if (showNotification) {
-           showNotification('Time to drink water 💧', { body: 'Stay hydrated!' }, '/water');
-        }
-        setNextReminder(Date.now() + intervalMs);
+        notificationService.showImmediate('Time to drink water 💧', { body: 'Stay hydrated! Maintain your peak performance.' }, '/water');
+        const nextTarget = Date.now() + intervalMs;
+        setNextReminder(nextTarget);
+        notificationService.scheduleWaterReminder(nextTarget, intervalMs);
       } else {
         setTimeLeft(remaining);
       }
@@ -37,18 +35,21 @@ export function useWaterReminder(showNotification) {
     tick();
     const timer = setInterval(tick, 1000);
     return () => clearInterval(timer);
-  }, [isRunning, nextReminder, intervalMs, setNextReminder, showNotification]);
+  }, [isRunning, nextReminder, intervalMs, setNextReminder]);
 
   const startWater = () => {
     if (isRunning) return;
+    const target = Date.now() + intervalMs;
     setIsRunning(true);
-    setNextReminder(Date.now() + intervalMs);
+    setNextReminder(target);
+    notificationService.scheduleWaterReminder(target, intervalMs);
   };
 
   const stopWater = () => {
     setIsRunning(false);
     setNextReminder(null);
     setTimeLeft(null);
+    notificationService.cancelWaterReminder();
   };
 
   const addGlass = () => {
@@ -68,7 +69,9 @@ export function useWaterReminder(showNotification) {
   const handleIntervalChange = (newInterval) => {
     setIntervalMs(newInterval);
     if (isRunning) {
-      setNextReminder(Date.now() + newInterval);
+      const nextTarget = Date.now() + newInterval;
+      setNextReminder(nextTarget);
+      notificationService.scheduleWaterReminder(nextTarget, newInterval);
     }
   };
 
