@@ -78,11 +78,29 @@ class NotificationService {
     return false;
   }
 
-  // Schedule background water reminder (Works when app is closed on Android/iOS & PWA)
+  async initChannels() {
+    if (this.isNative()) {
+      try {
+        await LocalNotifications.createChannel({
+          id: 'water_reminder_channel',
+          name: 'Water Reminders',
+          description: 'Timely reminders to stay hydrated',
+          importance: 5,
+          visibility: 1,
+          vibration: true
+        });
+      } catch (e) {
+        console.warn('Channel creation error:', e);
+      }
+    }
+  }
+
+  // Schedule background water reminder (Works when app is closed on Android/iOS via OS AlarmManager)
   async scheduleWaterReminder(targetTimestamp, intervalMs) {
     // 1. Native Capacitor App (Android / iOS): Uses OS AlarmManager
     if (this.isNative()) {
       try {
+        await this.initChannels();
         await LocalNotifications.cancel({ notifications: [{ id: WATER_NOTIFICATION_ID }] });
         await LocalNotifications.schedule({
           notifications: [
@@ -90,8 +108,12 @@ class NotificationService {
               id: WATER_NOTIFICATION_ID,
               title: 'Time to drink water 💧',
               body: 'Stay hydrated! Maintain your peak cognitive performance.',
-              schedule: { at: new Date(targetTimestamp) },
+              schedule: { 
+                at: new Date(targetTimestamp),
+                allowWhileIdle: true 
+              },
               sound: 'default',
+              channelId: 'water_reminder_channel',
               smallIcon: 'ic_stat_icon_config_sample',
               iconColor: '#FFD84D',
               actionTypeId: 'OPEN_WATER'
